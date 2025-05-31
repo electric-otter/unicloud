@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UniCloud VMs - Your Free, Modern Cloud Virtual Machines on Deno</title>
+    <meta name="description" content="Deploy and manage high-performance virtual machines on UniCloud, powered by Deno. It's completely free, scalable, secure, and developer-friendly.">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4A90E2; /* A nice blue */
+            --primary-dark: #357ABD;
+            --secondary-color: #50E3C2; /* A complementary green */
+            --accent-color: #F5A623; /* A warm orange for highlights */
+            --text-color: #333;
+            --light-text-color: #666;
+            --background-light: #f9f9f9;
+            --background-dark: #2c3e50; /* For a potential dark mode section */
+            --card-background: #ffffff;
+            --border-color: #ddd;
+            --shadow-light: rgba(0, 0, 0, 0.05);
+            --shadow-medium: rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            color: var(--text-color);
+            line-height: 1.6;
+            background-color: var(--background-light);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            background-color: var(--card-background);
+            padding: 15px 0;
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: 0 2px 4px var(--shadow-light);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+
+        nav ul li {
+            margin-left: 30px;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        nav ul li a:hover {
+            color: var(--primary-color);
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary-color);
+            color: var(--text-color); /* Adjusted for better contrast */
+        }
+
+        .btn-secondary:hover {
+            background-color: #3AD7B0; /* Slightly darker green */
+            color: var(--text-color);
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #6dd5ed 100%);
+            color: white;
+            padding: 80px 0;
+            text-align: center;
+            border-radius: 0 0 15px 15px;
+            box-shadow: 0 4px 8px var(--shadow-light);
+        }
+
+        .hero h1 {
+            font-size: 3.5em;
+            margin-bottom: 20px;
+            font-weight: 700;
+            line-height: 1.1;
+        }
+
+        .hero h1 strong {
+            color: var(--secondary-color); /* Highlight "Completely Free" */
+        }
+
+        .hero p {
+            font-size: 1.3em;
+            margin-bottom: 40px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            opacity: 0.9;
+        }
+
+        .hero .btn {
+            padding: 15px 30px;
+            font-size: 1.1em;
+            background-color: white;
+            color: var(--primary-color);
+        }
+
+        .hero .btn:hover {
+            background-color: var(--background-light);
+            color: var(--primary-dark);
+        }
+
+        /* Features Section */
+        .features {
+            padding: 60px 0;
+            text-align: center;
+        }
+
+        .features h2, .how-it-works h2, .cta h2 {
+            font-size: 2.5em;
+            margin-bottom: 60px;
+            color: var(--primary-dark);
+            position: relative;
+            display: inline-block;
+        }
+
+        .features h2::after, .how-it-works h2::after, .cta h2::after {
+            content: '';
+            position: absolute;
+            width: 80px;
+            height: 4px;
+            background-color: var(--secondary-color);
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: -15px;
+            border-radius: 2px;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-card {
+            background-color: var(--card-background);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px var(--shadow-light);
+            text-align: left;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-card i {
+            font-size: 2.5em;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            color: var(--primary-dark);
+        }
+
+        .feature-card p {
+            font-size: 1em;
+            color: var(--light-text-color);
+        }
+
+        /* How It Works Section */
+        .how-it-works {
+            background-color: var(--background-dark);
+            color: white;
+            padding: 80px 0;
+            text-align: center;
+        }
+
+        .how-it-works h2 {
+            color: white;
+        }
+
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 40px;
+        }
+
+        .step-card {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(5px);
+            transition: background-color 0.3s ease;
+        }
+
+        .step-card:hover {
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .step-card .step-number {
+            font-size: 2.5em;
+            font-weight: 700;
+            color: var(--secondary-color);
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .step-card h3 {
+            font-size: 1.4em;
+            margin-bottom: 10px;
+            color: white;
+        }
+
+        .step-card p {
+            font-size: 1em;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* Call to Action */
+        .cta {
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 80px 0;
+            text-align: center;
+            border-radius: 15px;
+            margin: 40px auto;
+            max-width: 1000px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .cta h2 {
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .cta p {
+            font-size: 1.4em;
+            margin-bottom: 40px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            opacity: 0.9;
+        }
+
+        .cta .btn {
+            background-color: white;
+            color: var(--primary-color);
+            padding: 15px 35px;
+            font-size: 1.2em;
+            border-radius: 7px;
+        }
+
+        .cta .btn:hover {
+            background-color: var(--background-light);
+            color: var(--primary-dark);
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--text-color);
+            color: white;
+            padding: 40px 0;
+            font-size: 0.9em;
+            text-align: center;
+        }
+
+        footer .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: flex-start;
+            text-align: left;
+        }
+
+        footer .footer-section {
+            flex: 1;
+            min-width: 200px; /* Ensures responsiveness */
+            margin-bottom: 30px;
+        }
+
+        footer .footer-section h4 {
+            font-size: 1.2em;
+            margin-bottom: 15px;
+            color: var(--secondary-color);
+        }
+
+        footer .footer-section ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        footer .footer-section ul li {
+            margin-bottom: 10px;
+        }
+
+        footer .footer-section ul li a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        footer .footer-section ul li a:hover {
+            color: white;
+        }
+
+        footer .social-icons a {
+            color: white;
+            font-size: 1.5em;
+            margin-right: 15px;
+            transition: color 0.3s ease;
+        }
+
+        footer .social-icons a:hover {
+            color: var(--primary-color);
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 20px;
+            margin-top: 20px;
+            text-align: center;
+            width: 100%;
+        }
+
+        .footer-bottom p {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5em;
+            }
+
+            .hero p {
+                font-size: 1.1em;
+            }
+
+            .features h2, .how-it-works h2, .cta h2 {
+                font-size: 2em;
+            }
+
+            nav ul {
+                display: none; /* Hide for mobile, would typically be a hamburger menu */
+            }
+
+            header .container {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .logo {
+                margin-bottom: 15px;
+            }
+
+            .footer-section {
+                flex-basis: 100%;
+                text-align: center;
+            }
+
+            .footer-section:not(:last-child) {
+                margin-bottom: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero {
+                padding: 60px 0;
+            }
+
+            .hero h1 {
+                font-size: 2em;
+            }
+
+            .hero p {
+                font-size: 1em;
+            }
+
+            .btn {
+                padding: 10px 15px;
+                font-size: 0.9em;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="/" class="logo">UniCloud VMs</a>
+            <nav>
+                <ul>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#how-it-works">How It Works</a></li>
+                    <li><a href="#cta">Get Started</a></li>
+                    <li><a href="/docs">Docs</a></li> </ul>
+            </nav>
+            <a href="/login" class="btn">Login / Sign Up</a>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="container">
+                <h1>Deploy Your Ideas Instantly with UniCloud VMs: <br>It's <strong>Completely Free</strong>.</h1>
+                <p>Experience the power of modern cloud virtual machines, built on Deno. Spin up your projects, experiment, and scale without worrying about costs.</p>
+                <a href="/signup" class="btn">Get Started for Free</a>
+            </div>
+        </section>
+
+        <section id="features" class="features">
+            <div class="container">
+                <h2>Why Choose UniCloud VMs?</h2>
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <i class="fas fa-gem"></i>
+                        <h3><strong>Truly Free Forever</strong></h3>
+                        <p>No credit card required, no hidden fees. UniCloud VMs are designed to help developers and students without any financial barrier.</p>
+                    </div>
+                    <div class="feature-card">
+                        <i class="fas fa-bolt"></i>
+                        <h3>Blazing Fast Performance</h3>
+                        <p>Leverage the efficiency of Deno for rapid VM provisioning and high-speed operations. Your applications run smoother, faster.</p>
+                    </div>
+                    <div class="feature-card">
+                        <i class="fas fa-lock"></i>
+                        <h3>Secure & Isolated</h3>
+                        <p>Each VM runs in an isolated, secure environment, protecting your data and applications with robust security measures.</p>
+                    </div>
+                    <div class="feature-card">
+                        <i class="fas fa-code"></i>
+                        <h3>Developer-Friendly</h3>
+                        <p>Built with developers in mind. Easy-to-use APIs, comprehensive documentation, and a command-line interface for seamless control.</p>
+                    </div>
+                    <div class="feature-card">
+                        <i class="fas fa-cloud"></i>
+                        <h3>Scalable Infrastructure</h3>
+                        <p>Whether you need one VM or many, our infrastructure scales to meet your demands, ensuring your projects always have the resources they need.</p>
+                    </div>
+                    <div class="feature-card">
+                        <i class="fas fa-seedling"></i>
+                        <h3>Eco-Conscious Design</h3>
+                        <p>We optimize our infrastructure to minimize energy consumption, offering a greener cloud computing solution.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="cta" class="cta">
+            <div class="container">
+                <h2>Ready to Experience Free Cloud VMs?</h2>
+                <p>Join the growing community of developers leveraging UniCloud VMs for their projects. It's time to build without constraints.</p>
+                <a href="/signup" class="btn">Start Building Now (It's Free!)</a>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-section">
+                <h4>UniCloud VMs</h4>
+                <p>Your platform for free, high-performance virtual machines powered by Deno.</p>
+            </div>
+        </div>
+</body>
+</html>

@@ -36,6 +36,6 @@ jobs:
         with:
           project: "unicloud"
           entrypoint: "index.html"
-          root: ""
+          root: "./"
           
           
